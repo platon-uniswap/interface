@@ -1,0 +1,49 @@
+{
+    "name": "PlatON Token List",
+    "version": {
+        "major": 0,
+        "minor": 2,
+        "patch": 0
+    },
+    "keywords": [
+        "gemini",
+        "tokens",
+        "trusted"
+    ],
+    "logoURI": "https://gemini.com/static/images/loader.png",
+    "timestamp": "2021-03-23T14:15:22+0000",
+    "tokens": [
+        {
+            "name": "Wrapped ETH",
+            "chainId": 210309,
+            "symbol": "WETH",
+            "decimals": 18,
+            "address": "0xA838575b75a8b7C4A086a656F2d589eFb03109D6",
+            "logoURI": "https://raw.githubusercontent.com/Uniswap/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"
+        },
+        {
+            "name": "USDT",
+            "chainId": 210309,
+            "symbol": "USDT",
+            "decimals": 6,
+            "address": "0x6A04AcbD67f6878A1Cc3DdDf7ACc45afA97057b1",
+            "logoURI": "https://ethereum-optimism.github.io/logos/USDT.png"
+        },
+        {
+            "name": "UNI-V2",
+            "chainId": 210309,
+            "symbol": "UNI-V2",
+            "decimals": 18,
+            "address": "0xE5177055644DF9e2FA47246EA0973dE2c11AE730",
+            "logoURI": "https://gemini.com/images/currencies/icons/default/uni.svg"
+        },
+        {
+            "name": "UNI",
+            "chainId": 210309,
+            "symbol": "UNI",
+            "decimals": 18,
+            "address": "0xDFA36286675c8a03050b63F23D79786A067E0d24",
+            "logoURI": "https://gemini.com/images/currencies/icons/default/uni.svg"
+        }
+    ]
+  }
