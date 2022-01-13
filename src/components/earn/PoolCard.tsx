@@ -136,10 +136,12 @@ export default function PoolCard({ stakingInfo }: { stakingInfo: StakingInfo }) 
         <RowBetween>
           <TYPE.white> Pool rate </TYPE.white>
           <TYPE.white>
+            {console.log('stakingInfo',stakingInfo)}
             {stakingInfo
               ? stakingInfo.active
                 ? `${stakingInfo.totalRewardRate
                     ?.multiply(BIG_INT_SECONDS_IN_WEEK)
+                    ?.multiply(JSBI.BigInt(1000))
                     ?.toFixed(0, { groupSeparator: ',' })} UNI / week`
                 : '0 UNI / week'
               : '-'}
@@ -163,6 +165,7 @@ export default function PoolCard({ stakingInfo }: { stakingInfo: StakingInfo }) 
                 ? stakingInfo.active
                   ? `${stakingInfo.rewardRate
                       ?.multiply(BIG_INT_SECONDS_IN_WEEK)
+                      ?.multiply(JSBI.BigInt(1000))
                       ?.toSignificant(4, { groupSeparator: ',' })} UNI / week`
                   : '0 UNI / week'
                 : '-'}

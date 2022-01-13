@@ -1,9 +1,10 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@platon-swap/uniswap-sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
+import { isPlatOnChains } from '../utils'
 
-import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
+import { injected } from '../connectors'
 
-export const ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
+export const ROUTER_ADDRESS = '0x2d51fd37f175984603A7d6C4758b27D09A1B2227'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -24,29 +25,52 @@ export const TRIBE = new Token(ChainId.MAINNET, '0xc7283b66Eb1EB5FB86327f08e1B58
 export const FRAX = new Token(ChainId.MAINNET, '0x853d955aCEf822Db058eb8505911ED77F175b99e', 18, 'FRAX', 'Frax')
 export const FXS = new Token(ChainId.MAINNET, '0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0', 18, 'FXS', 'Frax Share')
 export const renBTC = new Token(ChainId.MAINNET, '0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D', 8, 'renBTC', 'renBTC')
+export const PUSDT = new Token(ChainId.PLATON_TESTNET, '0x6A04AcbD67f6878A1Cc3DdDf7ACc45afA97057b1', 6, 'USDT', 'Tether USD')
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 13
 export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320
 export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LENGTH_IN_BLOCKS
 
-export const GOVERNANCE_ADDRESS = '0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F'
-
-export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
-
-const UNI_ADDRESS = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
 export const UNI: { [chainId in ChainId]: Token } = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'UNI', 'Uniswap'),
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'UNI', 'Uniswap')
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, getUniAddress(ChainId.MAINNET), 18, 'UNI', 'Uniswap'),
+  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, getUniAddress(ChainId.RINKEBY), 18, 'UNI', 'Uniswap'),
+  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, getUniAddress(ChainId.ROPSTEN), 18, 'UNI', 'Uniswap'),
+  [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, getUniAddress(ChainId.GÖRLI), 18, 'UNI', 'Uniswap'),
+  [ChainId.KOVAN]: new Token(ChainId.KOVAN, getUniAddress(ChainId.KOVAN), 18, 'UNI', 'Uniswap'),
+  [ChainId.PLATON_TESTNET]: new Token(ChainId.PLATON_TESTNET, getUniAddress(ChainId.PLATON_TESTNET), 18, 'UNI', 'Uniswap')
 }
 
-export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
-  [UNI_ADDRESS]: 'UNI',
-  [GOVERNANCE_ADDRESS]: 'Governance',
-  [TIMELOCK_ADDRESS]: 'Timelock'
+export function getUniAddress(chainId: ChainId): string {
+  if (isPlatOnChains(chainId)) {
+    return '0xDFA36286675c8a03050b63F23D79786A067E0d24'
+  }
+  return '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
+}
+
+export function getGovernAddress(chainId: ChainId): string {
+  if (isPlatOnChains(chainId)) {
+    return '0x7157e63BcAcfDa09Eb1C33Da88A0D0Bdc2880823'
+  }
+  return '0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F'
+}
+
+export function getTimelock(chainId: ChainId): string {
+  if (isPlatOnChains(chainId)) {
+    return '0xb90a71E184454F0eb544BD5e135cD093037649b4'
+  }
+  return '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
+}
+
+export function COMMON_CONTRACT_NAMES(chainId: ChainId, address: string): string {
+  if (getUniAddress(chainId) === address) {
+    return 'UNI';
+  } else if (getGovernAddress(chainId) === address) {
+    return 'Governance';
+  } else if (getTimelock(chainId) === address) {
+    return 'Timelock';
+  }
+  return '';
 }
 
 // TODO: specify merkle distributor for mainnet
@@ -59,7 +83,8 @@ const WETH_ONLY: ChainTokenList = {
   [ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
   [ChainId.RINKEBY]: [WETH[ChainId.RINKEBY]],
   [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
-  [ChainId.KOVAN]: [WETH[ChainId.KOVAN]]
+  [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
+  [ChainId.PLATON_TESTNET]: [WETH[ChainId.PLATON_TESTNET]]
 }
 
 // used to construct intermediary pairs for trading
@@ -70,8 +95,8 @@ export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
 
 export const ADDITIONAL_BASES: { [chainId in ChainId]?: { [tokenAddress: string]: Token[] } } = {
   [ChainId.MAINNET]: {
-    '0xA948E86885e12Fb09AfEF8C52142EBDbDf73cD18': [new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap')],
-    '0x561a4717537ff4AF5c687328c0f7E90a319705C0': [new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'UNI', 'Uniswap')],
+    '0xA948E86885e12Fb09AfEF8C52142EBDbDf73cD18': [new Token(ChainId.MAINNET, getUniAddress(ChainId.MAINNET), 18, 'UNI', 'Uniswap')],
+    '0x561a4717537ff4AF5c687328c0f7E90a319705C0': [new Token(ChainId.MAINNET, getUniAddress(ChainId.MAINNET), 18, 'UNI', 'Uniswap')],
     [FEI.address]: [TRIBE],
     [TRIBE.address]: [FEI],
     [FRAX.address]: [FXS],
@@ -144,50 +169,50 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     href: null,
     color: '#E8831D'
   },
-  WALLET_CONNECT: {
-    connector: walletconnect,
-    name: 'WalletConnect',
-    iconName: 'walletConnectIcon.svg',
-    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
-    href: null,
-    color: '#4196FC',
-    mobile: true
-  },
-  WALLET_LINK: {
-    connector: walletlink,
-    name: 'Coinbase Wallet',
-    iconName: 'coinbaseWalletIcon.svg',
-    description: 'Use Coinbase Wallet app on mobile device',
-    href: null,
-    color: '#315CF5'
-  },
-  COINBASE_LINK: {
-    name: 'Open in Coinbase Wallet',
-    iconName: 'coinbaseWalletIcon.svg',
-    description: 'Open in Coinbase Wallet app.',
-    href: 'https://go.cb-w.com/mtUDhEZPy1',
-    color: '#315CF5',
-    mobile: true,
-    mobileOnly: true
-  },
-  FORTMATIC: {
-    connector: fortmatic,
-    name: 'Fortmatic',
-    iconName: 'fortmaticIcon.png',
-    description: 'Login using Fortmatic hosted wallet',
-    href: null,
-    color: '#6748FF',
-    mobile: true
-  },
-  Portis: {
-    connector: portis,
-    name: 'Portis',
-    iconName: 'portisIcon.png',
-    description: 'Login using Portis hosted wallet',
-    href: null,
-    color: '#4A6C9B',
-    mobile: true
-  }
+  // WALLET_CONNECT: {
+  //   connector: walletconnect,
+  //   name: 'WalletConnect',
+  //   iconName: 'walletConnectIcon.svg',
+  //   description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
+  //   href: null,
+  //   color: '#4196FC',
+  //   mobile: true
+  // },
+  // WALLET_LINK: {
+  //   connector: walletlink,
+  //   name: 'Coinbase Wallet',
+  //   iconName: 'coinbaseWalletIcon.svg',
+  //   description: 'Use Coinbase Wallet app on mobile device',
+  //   href: null,
+  //   color: '#315CF5'
+  // },
+  // COINBASE_LINK: {
+  //   name: 'Open in Coinbase Wallet',
+  //   iconName: 'coinbaseWalletIcon.svg',
+  //   description: 'Open in Coinbase Wallet app.',
+  //   href: 'https://go.cb-w.com/mtUDhEZPy1',
+  //   color: '#315CF5',
+  //   mobile: true,
+  //   mobileOnly: true
+  // },
+  // FORTMATIC: {
+  //   connector: fortmatic,
+  //   name: 'Fortmatic',
+  //   iconName: 'fortmaticIcon.png',
+  //   description: 'Login using Fortmatic hosted wallet',
+  //   href: null,
+  //   color: '#6748FF',
+  //   mobile: true
+  // },
+  // Portis: {
+  //   connector: portis,
+  //   name: 'Portis',
+  //   iconName: 'portisIcon.png',
+  //   description: 'Login using Portis hosted wallet',
+  //   href: null,
+  //   color: '#4A6C9B',
+  //   mobile: true
+  // }
 }
 
 export const NetworkContextName = 'NETWORK'

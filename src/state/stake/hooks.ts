@@ -1,13 +1,14 @@
 import { ChainId, CurrencyAmount, JSBI, Token, TokenAmount, WETH, Pair } from '@platon-swap/uniswap-sdk'
 import { useMemo } from 'react'
-import { DAI, UNI, USDC, USDT, WBTC } from '../../constants'
+import { DAI, UNI, USDC, USDT, WBTC, PUSDT } from '../../constants'
 import { STAKING_REWARDS_INTERFACE } from '../../constants/abis/staking-rewards'
 import { useActiveWeb3React } from '../../hooks'
 import { NEVER_RELOAD, useMultipleContractSingleData } from '../multicall/hooks'
 import { tryParseAmount } from '../swap/hooks'
+import { isPlatOnChains } from '../../utils'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 
-export const STAKING_GENESIS = 1600387200
+export const STAKING_GENESIS = 1641817650
 
 export const REWARDS_DURATION_DAYS = 60
 
@@ -34,6 +35,12 @@ export const STAKING_REWARDS_INFO: {
     {
       tokens: [WETH[ChainId.MAINNET], WBTC],
       stakingRewardAddress: '0xCA35e32e7926b96A9988f61d510E038108d8068e'
+    }
+  ],
+  [ChainId.PLATON_TESTNET]: [
+    {
+      tokens: [WETH[ChainId.PLATON_TESTNET], PUSDT],
+      stakingRewardAddress: '0xAC66c9D8CC647bD5219c2Bb0010ADACCDe1654BA'
     }
   ]
 }
@@ -77,13 +84,13 @@ export function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
     () =>
       chainId
         ? STAKING_REWARDS_INFO[chainId]?.filter(stakingRewardInfo =>
-            pairToFilterBy === undefined
-              ? true
-              : pairToFilterBy === null
+          pairToFilterBy === undefined
+            ? true
+            : pairToFilterBy === null
               ? false
               : pairToFilterBy.involvesToken(stakingRewardInfo.tokens[0]) &&
-                pairToFilterBy.involvesToken(stakingRewardInfo.tokens[1])
-          ) ?? []
+              pairToFilterBy.involvesToken(stakingRewardInfo.tokens[1])
+        ) ?? []
         : [],
     [chainId, pairToFilterBy]
   )
@@ -177,7 +184,7 @@ export function useStakingInfo(pairToFilterBy?: Pair | null): StakingInfo[] {
         const individualRewardRate = getHypotheticalRewardRate(stakedAmount, totalStakedAmount, totalRewardRate)
 
         const periodFinishSeconds = periodFinishState.result?.[0]?.toNumber()
-        const periodFinishMs = periodFinishSeconds * 1000
+        const periodFinishMs = isPlatOnChains(chainId) ? periodFinishSeconds : periodFinishSeconds * 1000
 
         // compare period end timestamp vs current block timestamp (in seconds)
         const active =

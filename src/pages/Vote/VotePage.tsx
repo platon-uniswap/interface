@@ -22,7 +22,7 @@ import VoteModal from '../../components/vote/VoteModal'
 import { JSBI, TokenAmount } from '@platon-swap/uniswap-sdk'
 import { useActiveWeb3React } from '../../hooks'
 import { AVERAGE_BLOCK_TIME_IN_SECS, COMMON_CONTRACT_NAMES, UNI, ZERO_ADDRESS } from '../../constants'
-import { getEtherscanLink, isAddress } from '../../utils'
+import { getEtherscanLink, isAddress, isPlatOnChains } from '../../utils'
 import { ApplicationModal } from '../../state/application/actions'
 import { useBlockNumber, useModalOpen, useToggleDelegateModal, useToggleVoteModal } from '../../state/application/hooks'
 import DelegateModal from '../../components/vote/DelegateModal'
@@ -136,10 +136,10 @@ export default function VotePage({
   const endDate: DateTime | undefined =
     proposalData && currentTimestamp && currentBlock
       ? DateTime.fromSeconds(
-          currentTimestamp
-            .add(BigNumber.from(AVERAGE_BLOCK_TIME_IN_SECS).mul(BigNumber.from(proposalData.endBlock - currentBlock)))
-            .toNumber()
-        )
+        currentTimestamp
+          .add(BigNumber.from(AVERAGE_BLOCK_TIME_IN_SECS).mul(BigNumber.from(proposalData.endBlock - currentBlock)))
+          .toNumber() / (isPlatOnChains(chainId) ? 1000 : 1)
+      )
       : undefined
   const now: DateTime = DateTime.local()
 
@@ -172,7 +172,7 @@ export default function VotePage({
   // if content is contract with common name, replace address with common name
   const linkIfAddress = (content: string) => {
     if (isAddress(content) && chainId) {
-      const commonName = COMMON_CONTRACT_NAMES[content] ?? content
+      const commonName = COMMON_CONTRACT_NAMES(chainId, content) ?? content
       return <ExternalLink href={getEtherscanLink(chainId, content, 'address')}>{commonName}</ExternalLink>
     }
     return <span>{content}</span>
@@ -198,8 +198,8 @@ export default function VotePage({
               {endDate && endDate < now
                 ? 'Voting ended ' + (endDate && endDate.toLocaleString(DateTime.DATETIME_FULL))
                 : proposalData
-                ? 'Voting ends approximately ' + (endDate && endDate.toLocaleString(DateTime.DATETIME_FULL))
-                : ''}
+                  ? 'Voting ends approximately ' + (endDate && endDate.toLocaleString(DateTime.DATETIME_FULL))
+                  : ''}
             </TYPE.main>
           </RowBetween>
           {proposalData && proposalData.status === ProposalState.Active && !showVotingButtons && (

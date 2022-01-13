@@ -180,6 +180,7 @@ export default function Manage({
               {stakingInfo?.active
                 ? stakingInfo?.totalRewardRate
                     ?.multiply(BIG_INT_SECONDS_IN_WEEK)
+                    ?.multiply(JSBI.BigInt(1000))
                     ?.toFixed(0, { groupSeparator: ',' }) ?? '-'
                 : '0'}
               {' UNI / week'}
@@ -298,6 +299,7 @@ export default function Manage({
                   {stakingInfo?.active
                     ? stakingInfo?.rewardRate
                         ?.multiply(BIG_INT_SECONDS_IN_WEEK)
+                        ?.multiply(JSBI.BigInt(1000))
                         ?.toSignificant(4, { groupSeparator: ',' }) ?? '-'
                     : '0'}
                   {' UNI / week'}

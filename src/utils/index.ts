@@ -22,7 +22,15 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   3: 'ropsten.',
   4: 'rinkeby.',
   5: 'goerli.',
-  42: 'kovan.'
+  42: 'kovan.',
+  210309: ''
+}
+
+export enum ExplorerDataType {
+  TRANSACTION = 'transaction',
+  TOKEN = 'token',
+  ADDRESS = 'address',
+  BLOCK = 'block',
 }
 
 export function getEtherscanLink(
@@ -30,21 +38,34 @@ export function getEtherscanLink(
   data: string,
   type: 'transaction' | 'token' | 'address' | 'block'
 ): string {
-  const prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
-
-  switch (type) {
-    case 'transaction': {
-      return `${prefix}/tx/${data}`
+  if (chainId === ChainId.PLATON_TESTNET) {
+    switch (type) {
+      case ExplorerDataType.TRANSACTION:
+        return `https://devnetscan.platon.network/trade-detail?txHash=${data}`
+      case ExplorerDataType.ADDRESS:
+      case ExplorerDataType.TOKEN:
+        return `https://devnetscan.platon.network/address-detail?address=${data}`
+      case ExplorerDataType.BLOCK:
+        return `https://devnetscan.platon.network/block-detail?height=${data}`
+      default:
+        return `https://devnetscan.platon.network/`
     }
-    case 'token': {
-      return `${prefix}/token/${data}`
-    }
-    case 'block': {
-      return `${prefix}/block/${data}`
-    }
-    case 'address':
-    default: {
-      return `${prefix}/address/${data}`
+  } else {
+    const prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
+    switch (type) {
+      case ExplorerDataType.TRANSACTION: {
+        return `${prefix}/tx/${data}`
+      }
+      case ExplorerDataType.TOKEN: {
+        return `${prefix}/token/${data}`
+      }
+      case ExplorerDataType.BLOCK: {
+        return `${prefix}/block/${data}`
+      }
+      case ExplorerDataType.ADDRESS:
+      default: {
+        return `${prefix}/address/${data}`
+      }
     }
   }
 }
@@ -109,4 +130,8 @@ export function escapeRegExp(string: string): string {
 export function isTokenOnList(defaultTokens: TokenAddressMap, currency?: Currency): boolean {
   if (currency === ETHER) return true
   return Boolean(currency instanceof Token && defaultTokens[currency.chainId]?.[currency.address])
+}
+
+export function isPlatOnChains(chainId?: ChainId): boolean {
+  return chainId === ChainId.PLATON_TESTNET
 }

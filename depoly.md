@@ -10,7 +10,7 @@
 
 * 包名：uniswap-sdk
 
-* 源码地址: [https://github.com/platon-uniswap/uniswap-sdk](https://github.com/platon-uniswap/uniswap-sdk)
+* 源码地址: https://github.com/platon-uniswap/uniswap-sdk
 
 * 修改位置：
 
@@ -129,7 +129,7 @@ export function getTimelock(chainId: ChainId): string {
 - src/constants/list.ts(第15行)
 
 ```javascript
-const GEMINI_LIST = 'https://raw.githubusercontent.com/platon-uniswap/interface/main/public/main.json'
+const GEMINI_LIST = 'https://raw.githubusercontent.com/fujianlian/interface/main/public/main.json'
 ```
 
 这个默认的json列表所在的URL地址需要替换成可以访问到token-list.json文件的URL地址
@@ -152,7 +152,7 @@ const GEMINI_LIST = 'https://raw.githubusercontent.com/platon-uniswap/interface/
             "name": "USDT",
             "chainId": 210309,
             "symbol": "USDT",
-            "decimals": 6,
+            "decimals": 18,
             "address": "0x6A04AcbD67f6878A1Cc3DdDf7ACc45afA97057b1",
             "logoURI": "https://ethereum-optimism.github.io/logos/USDT.png"
         },

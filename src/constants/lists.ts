@@ -12,7 +12,7 @@ const COINGECKO_LIST = 'https://tokens.coingecko.com/uniswap/all.json'
 const CMC_ALL_LIST = 'defi.cmc.eth'
 const CMC_STABLECOIN = 'stablecoin.cmc.eth'
 const KLEROS_LIST = 't2crtokens.eth'
-const GEMINI_LIST = 'https://www.gemini.com/uniswap/manifest.json'
+const GEMINI_LIST = 'https://raw.githubusercontent.com/platon-uniswap/interface/main/public/main.json'
 const BA_LIST = 'https://raw.githubusercontent.com/The-Blockchain-Association/sec-notice-list/master/ba-sec-list.json'
 
 export const UNSUPPORTED_LIST_URLS: string[] = [BA_LIST]
