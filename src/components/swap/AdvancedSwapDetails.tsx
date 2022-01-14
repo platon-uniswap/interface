@@ -105,7 +105,7 @@ export function AdvancedSwapDetails({ trade }: AdvancedSwapDetailsProps) {
           {!showRoute && (
             <AutoColumn style={{ padding: '12px 16px 0 16px' }}>
               <InfoLink
-                href={'https://devnet-swap.ddex.cc/#/pair/' + trade.route.pairs[0].liquidityToken.address}
+                href={'http://47.75.134.126:8081/#/pair/' + trade.route.pairs[0].liquidityToken.address}
                 target="_blank"
               >
                 View pair analytics ↗

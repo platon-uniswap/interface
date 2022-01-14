@@ -121,7 +121,7 @@ export default function Menu() {
             <MessageCircle size={14} />
             Discord
           </MenuItem>
-          <MenuItem id="link" href="https://devnet-info.ddex.cc/">
+          <MenuItem id="link" href="http://47.75.134.126:8080/">
             <PieChart size={14} />
             Analytics
           </MenuItem>

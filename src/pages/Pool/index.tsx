@@ -195,7 +195,7 @@ export default function Pool() {
               <>
                 <ButtonSecondary>
                   <RowBetween>
-                    <ExternalLink href={'https://devnet-info.ddex.cc/#/account/' + account}>
+                    <ExternalLink href={'http://47.75.134.126:8080/#/account/' + account}>
                       Account analytics and accrued fees
                     </ExternalLink>
                     <span> ↗</span>
